@@ -40,7 +40,6 @@ public class BestFirstSearch extends Search
 	
 	protected Hashtable closed;
 	protected TreeSet open;
-	protected Filter filter = null;
 	
 	public BestFirstSearch(State s)
     {
@@ -54,11 +53,6 @@ public class BestFirstSearch extends Search
 		
 		closed = new Hashtable();
 		open = new TreeSet(comp);
-	}
-
-	public void setFilter(Filter f)
-	{
-		filter = f;
 	}
 
 	public void updateOpen(State S)

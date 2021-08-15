@@ -29,6 +29,7 @@
 
 package javaff.search;
 
+import javaff.planning.Filter;
 import javaff.planning.State;
 
 import java.util.Comparator;
@@ -41,10 +42,17 @@ public abstract class Search
 	protected State start;
 	protected int nodeCount = 0;
 	protected Comparator comp;
+	protected Filter filter = null;
 
 	public Search(State s)
 	{
 		start = s;
+	}
+
+
+	public void setFilter(Filter f)
+	{
+		filter = f;
 	}
 
 	public Comparator getComparator()

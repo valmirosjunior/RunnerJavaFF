@@ -39,18 +39,12 @@ public class BreadthFirstSearch extends Search
 	
 	protected LinkedList open;
 	protected Hashtable closed;
-	protected Filter filter = null;
 
 	public BreadthFirstSearch(State s)
 	{
 		super(s);
 		open = new LinkedList();
 		closed = new Hashtable();
-	}
-
-	public void setFilter(Filter f)
-	{
-		filter = f;
 	}
 
 

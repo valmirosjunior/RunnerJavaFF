@@ -46,7 +46,6 @@ public class EnforcedHillClimbingSearch extends Search
 
 	protected Hashtable closed;
 	protected LinkedList open;
-	protected Filter filter = null;
 	
 	public EnforcedHillClimbingSearch(State s)
 	{
@@ -60,11 +59,6 @@ public class EnforcedHillClimbingSearch extends Search
 		
 		closed = new Hashtable();
 		open = new LinkedList();
-	}
-
-	public void setFilter(Filter f)
-	{
-		filter = f;
 	}
 
 	public State removeNext()
