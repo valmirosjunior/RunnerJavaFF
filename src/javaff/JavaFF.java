@@ -46,6 +46,7 @@ import javaff.search.BreadthFirstSearch;
 import javaff.search.Search;
 import javaff.search.BestFirstSearch;
 import javaff.search.EnforcedHillClimbingSearch;
+import javaff.search.LimitedEnforcedHillClimbingSearch;
 
 
 import java.io.PrintStream;
@@ -83,6 +84,7 @@ public class JavaFF
 			File domainFile = new File(args[0]);
 			File problemFile = new File(args[1]);
 			File solutionFile = null;
+			String searchName = null;
 			if (args.length > 2)
 			{
 				generator = new Random(Integer.parseInt(args[2]));
@@ -93,16 +95,18 @@ public class JavaFF
 				solutionFile = new File(args[3]);
 			}
 	
-			Plan plan = plan(domainFile,problemFile);
+			if (args.length > 4) {
+				searchName = args[4];
+			}
 	
+			Plan plan = plan(domainFile, problemFile, searchName);
+
 			if (solutionFile != null && plan != null) writePlanToFile(plan, solutionFile);
 			
 		}
 	}
 
-
-    public static Plan plan(File dFile, File pFile)
-    {
+	public static Plan plan(File dFile, File pFile, String searchName) {
 		// ********************************
 		// Parse and Ground the Problem
 		// ********************************
@@ -129,8 +133,14 @@ public class JavaFF
 		// Get the initial state
 		TemporalMetricState initialState = ground.getTemporalMetricInitialState();
 		
-        State goalState = performSearch(initialState);
-                
+		State goalState = null;
+		
+		if(searchName != null) {
+			goalState = performSearch(searchName, initialState);
+		}else {
+			goalState = performBreadthSearch(initialState);
+		}		
+
 		long afterPlanning = System.currentTimeMillis();
 
         TotalOrderPlan top = null;
@@ -168,7 +178,7 @@ public class JavaFF
 
     }
     
-    public static State performSearch(TemporalMetricState initialState) {
+    public static State performBreadthSearch(TemporalMetricState initialState) {
     	// *******************************************
     	// Blind Search - Breadth First 
     	// *******************************************
@@ -184,5 +194,42 @@ public class JavaFF
     	return goalState; // return the plan ****/
       
     }
+	
+	public static State performSearch(String searchName, TemporalMetricState initialState) {
+		infoOutput.println("Performing "+ searchName +"search...");
+		
+		Search search = selectSeach(searchName, initialState);
+		
+		search.setFilter(NullFilter.getInstance());
+		
+		return search.search();		
+	}
+
+	private static Search selectSeach(String searchName, TemporalMetricState initialState) {
+		Search search = null;
+
+		switch (searchName) {
+		case "BrFs":
+			search = new BreadthFirstSearch(initialState);
+			break;
+
+		case "BFS":
+			search = new BestFirstSearch(initialState);
+			break;
+
+		case "EHCSem":
+			BigDecimal number = new BigDecimal(10000);
+
+			search = new LimitedEnforcedHillClimbingSearch(initialState, number);
+			break;
+
+		case "EHCCom":
+			search = new EnforcedHillClimbingSearch(initialState);
+			break;
+
+		}
+
+		return search;
+	}
     
 }
